@@ -28,6 +28,7 @@ function iniciarApp() {
       option.value = strCategory;
       option.textContent = strCategory;
       selectCategorias.appendChild(option);
+
     });
   }
 
@@ -57,7 +58,7 @@ function iniciarApp() {
 
     // Iterar en los resultados
     recetas.forEach((receta) => {
-      const { idmeal, strMeal, strMealThumb } = receta;
+      const { idMeal, strMeal, strMealThumb } = receta;
 
       const recetaContenedor = document.createElement("DIV");
       recetaContenedor.classList.add("col-md-4");
@@ -81,6 +82,10 @@ function iniciarApp() {
       recetaButton.classList.add("btn", "btn-danger", "w-100");
       recetaButton.textContent = "Ver Receta";
 
+      recetaButton.onclick = function() {
+        seleccionarReceta(idMeal);
+      }
+
       //Inyectar en el codigo HTML
       recetaCardBody.appendChild(recetaHeading);
       recetaCardBody.appendChild(recetaButton);
@@ -94,6 +99,40 @@ function iniciarApp() {
       console.log(recetaHeading);
     });
   }
+}
+
+function seleccionarReceta(id){
+  const url = `https://themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
+
+  fetch(url)
+  .then(respuesta => {
+    setTimeout(() => {
+      respuesta.json()
+        .then(resultado => mostrarRecetaModal(resultado))
+        
+    }, 500);
+  })
+}
+
+function mostrarRecetaModal(receta){
+  
+}
+
+function borrar(){
+
+  function callback(resultado, callback){
+    console.log(`Resultado: ${resultado}`);
+    setTimeout(() => {
+      callback(resultado * 2 );
+    }, 2000);
+  }
+
+  function callbackFinal(resultado){
+    console.log(`Resultado: ${resultado}`);
+  }
+
+callback(5, callbackFinal);
+
 }
 
 document.addEventListener("DOMContentLoaded", iniciarApp);
