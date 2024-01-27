@@ -5,6 +5,7 @@ function iniciarApp() {
   selectCategorias.addEventListener("change", seleccionarCategoria);
 
   const resultado = document.querySelector("#resultado");
+  const modal = new bootstrap.Modal("#modal", {});
 
   obtenerCategorias();
 
@@ -28,7 +29,6 @@ function iniciarApp() {
       option.value = strCategory;
       option.textContent = strCategory;
       selectCategorias.appendChild(option);
-
     });
   }
 
@@ -42,18 +42,17 @@ function iniciarApp() {
       .then((respuesta) => respuesta.json())
       .then((resultado) => mostrarRecetas(resultado.meals));
   }
-  
-  function limpiarHTML(selector){
-    while(selector.firstChild){
-        selector.removeChild(selector.firstChild);
+
+  function limpiarHTML(selector) {
+    while (selector.firstChild) {
+      selector.removeChild(selector.firstChild);
     }
   }
 
   function mostrarRecetas(recetas = []) {
-    
-    const heading = document.createElement('H2');
-    heading.classList.add('text-center','text-black', 'my-5');
-    heading.textContent = recetas.length?'Resultados' : 'No hay resultados';
+    const heading = document.createElement("H2");
+    heading.classList.add("text-center", "text-black", "my-5");
+    heading.textContent = recetas.length ? "Resultados" : "No hay resultados";
     resultado.appendChild(heading);
 
     // Iterar en los resultados
@@ -82,9 +81,9 @@ function iniciarApp() {
       recetaButton.classList.add("btn", "btn-danger", "w-100");
       recetaButton.textContent = "Ver Receta";
 
-      recetaButton.onclick = function() {
+      recetaButton.onclick = function () {
         seleccionarReceta(idMeal);
-      }
+      };
 
       //Inyectar en el codigo HTML
       recetaCardBody.appendChild(recetaHeading);
@@ -95,44 +94,54 @@ function iniciarApp() {
 
       recetaContenedor.appendChild(recetaCard);
       resultado.appendChild(recetaContenedor);
-    
+
       console.log(recetaHeading);
     });
   }
-}
 
-function seleccionarReceta(id){
-  const url = `https://themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
+  function seleccionarReceta(id) {
+    const url = `https://themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
 
-  fetch(url)
-  .then(respuesta => {
-    setTimeout(() => {
-      respuesta.json()
-        .then(resultado => mostrarRecetaModal(resultado))
-        
-    }, 500);
-  })
-}
-
-function mostrarRecetaModal(receta){
-  
-}
-
-function borrar(){
-
-  function callback(resultado, callback){
-    console.log(`Resultado: ${resultado}`);
-    setTimeout(() => {
-      callback(resultado * 2 );
-    }, 2000);
+    fetch(url).then((respuesta) => {
+      setTimeout(() => {
+        respuesta
+          .json()
+          .then((resultado) => mostrarRecetaModal(resultado.meals[0]));
+      }, 500);
+    });
   }
 
-  function callbackFinal(resultado){
-    console.log(`Resultado: ${resultado}`);
+  function mostrarRecetaModal(receta) {
+    const {idMeal, strInstructions, strMeal, strMealThumb} = receta;
+    
+    const modalTitle = document.querySelector('.modal .modal-title');
+    const modalBody = document.querySelector('.modal .modal-body');
+    
+    modalTitle.textContent = strMeal;
+    modalBody.innerHTML = `
+      <img class="img-fluid" src="${strMealThumb}" alt="receta ${strMeal}">
+      <h3 class="my-3" > Instructions </h3>
+      <p>${strInstructions}</p>
+    `
+
+    //muestra el modal
+    modal.show();
   }
 
-callback(5, callbackFinal);
+  function borrar() {
+    function callback(resultado, callback) {
+      console.log(`Resultado: ${resultado}`);
+      setTimeout(() => {
+        callback(resultado * 2);
+      }, 2000);
+    }
 
+    function callbackFinal(resultado) {
+      console.log(`Resultado: ${resultado}`);
+    }
+
+    callback(5, callbackFinal);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", iniciarApp);
