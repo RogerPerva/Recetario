@@ -17,7 +17,7 @@ function iniciarApp() {
         return respuesta.json(); //obtenemos respuesta de tipo json
       })
       .then((resultado) => {
-        console.log(resultado.categories); // entonces... imprimimos los resultados en consola
+        //console.log(resultado.categories); // entonces... imprimimos los resultados en consola
         mostrarCategorias(resultado.categories);
       });
   }
@@ -95,7 +95,7 @@ function iniciarApp() {
       recetaContenedor.appendChild(recetaCard);
       resultado.appendChild(recetaContenedor);
 
-      console.log(recetaHeading);
+      
     });
   }
 
@@ -112,6 +112,8 @@ function iniciarApp() {
   }
 
   function mostrarRecetaModal(receta) {
+
+    console.log(receta);
     const {idMeal, strInstructions, strMeal, strMealThumb} = receta;
     
     const modalTitle = document.querySelector('.modal .modal-title');
@@ -122,7 +124,30 @@ function iniciarApp() {
       <img class="img-fluid" src="${strMealThumb}" alt="receta ${strMeal}">
       <h3 class="my-3" > Instructions </h3>
       <p>${strInstructions}</p>
+      <h3 class="my-3" > Ingredients and measures</h3>
     `
+    //Mostrar cantidades e ingredientes
+    const listGroup = document.createElement('UL');
+    listGroup.classList.add('list-group');
+    for(let i=1; i<=20; i++){
+      if(receta[`strIngredient${i}`] && receta[`strMeasure${i}`]){
+        // console.log(receta[`strIngredient${i}`]);
+        //  modalBody.innerHTML += `
+        //   <li> ${receta[`strIngredient${i}`]} - ${receta[`strMeasure${i}`]} </li>
+        //  `
+
+        const ingrediente = receta[`strIngredient${i}`];
+        const cantidad = receta[`strMeasure${i}`];
+
+        const ingredienteLi = document.createElement('LI');
+        ingredienteLi.classList.add('list-group-item');
+        ingredienteLi.textContent = `${ingrediente} - ${cantidad}`
+
+        listGroup.appendChild(ingredienteLi);
+      }
+      modalBody.appendChild(listGroup);
+
+    }
 
     //muestra el modal
     modal.show();
