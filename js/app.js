@@ -94,8 +94,6 @@ function iniciarApp() {
 
       recetaContenedor.appendChild(recetaCard);
       resultado.appendChild(recetaContenedor);
-
-      
     });
   }
 
@@ -112,25 +110,24 @@ function iniciarApp() {
   }
 
   function mostrarRecetaModal(receta) {
-
     console.log(receta);
-    const {idMeal, strInstructions, strMeal, strMealThumb} = receta;
-    
-    const modalTitle = document.querySelector('.modal .modal-title');
-    const modalBody = document.querySelector('.modal .modal-body');
-    
+    const { idMeal, strInstructions, strMeal, strMealThumb } = receta;
+
+    const modalTitle = document.querySelector(".modal .modal-title");
+    const modalBody = document.querySelector(".modal .modal-body");
+
     modalTitle.textContent = strMeal;
     modalBody.innerHTML = `
       <img class="img-fluid" src="${strMealThumb}" alt="receta ${strMeal}">
       <h3 class="my-3" > Instructions </h3>
       <p>${strInstructions}</p>
       <h3 class="my-3" > Ingredients and measures</h3>
-    `
+    `;
     //Mostrar cantidades e ingredientes
-    const listGroup = document.createElement('UL');
-    listGroup.classList.add('list-group');
-    for(let i=1; i<=20; i++){
-      if(receta[`strIngredient${i}`] && receta[`strMeasure${i}`]){
+    const listGroup = document.createElement("UL");
+    listGroup.classList.add("list-group");
+    for (let i = 1; i <= 20; i++) {
+      if (receta[`strIngredient${i}`] && receta[`strMeasure${i}`]) {
         // console.log(receta[`strIngredient${i}`]);
         //  modalBody.innerHTML += `
         //   <li> ${receta[`strIngredient${i}`]} - ${receta[`strMeasure${i}`]} </li>
@@ -139,15 +136,33 @@ function iniciarApp() {
         const ingrediente = receta[`strIngredient${i}`];
         const cantidad = receta[`strMeasure${i}`];
 
-        const ingredienteLi = document.createElement('LI');
-        ingredienteLi.classList.add('list-group-item');
-        ingredienteLi.textContent = `${ingrediente} - ${cantidad}`
+        const ingredienteLi = document.createElement("LI");
+        ingredienteLi.classList.add("list-group-item");
+        ingredienteLi.textContent = `${ingrediente} - ${cantidad}`;
 
         listGroup.appendChild(ingredienteLi);
       }
       modalBody.appendChild(listGroup);
-
     }
+
+    const modalFooter = document.querySelector(".modal-footer");
+
+    //botones de cerrar y favorito
+    const btnFavorito = document.createElement("BUTTON");
+    btnFavorito.classList.add("btn", "btn-danger", "col");
+    btnFavorito.textContent = "Guardar Favorito";
+
+    const btnCerrar = document.createElement("BUTTON");
+    btnCerrar.classList.add("btn", "btn-secondary", "col");
+    btnCerrar.addEventListener("click", () => {
+      modal.hide();
+    });
+
+    btnCerrar.textContent = "Cerrar";
+
+    limpiarHTML(modalFooter);
+    modalFooter.appendChild(btnFavorito);
+    modalFooter.appendChild(btnCerrar);
 
     //muestra el modal
     modal.show();
