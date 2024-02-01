@@ -7,17 +7,23 @@ function iniciarApp() {
   const resultado = document.querySelector("#resultado");
   const modal = new bootstrap.Modal("#modal", {});
 
-  const btnBorrar = document.querySelector('.btnBorrar');
-  btnBorrar.addEventListener("click", borrarFav);
-  ///// test
-  function borrarFav() {
-    const approve = confirm("¿Estas seguro que quieres borrar tus recetas?");
+  //globalizando
+  const modalFooter = document.querySelector(".modal-footer");
+  const btnFavorito = document.createElement("BUTTON");
+  const btnCerrar = document.createElement("BUTTON");
 
-    if (approve) {
-      localStorage.clear();
-      //location.reload();
-    }
-  }
+  ///// test
+  // const btnBorrar = document.querySelector('.btnBorrar');
+  // btnBorrar.addEventListener("click", borrarFav);
+
+  // function borrarFav() {
+  //   const approve = confirm("¿Estas seguro que quieres borrar tus recetas?");
+
+  //   if (approve) {
+  //     localStorage.clear();
+  //     //location.reload();
+  //   }
+  // }
   ///// test
 
   obtenerCategorias();
@@ -157,20 +163,21 @@ function iniciarApp() {
       modalBody.appendChild(listGroup);
     }
 
-    const modalFooter = document.querySelector(".modal-footer");
-
     //botones de cerrar y favorito
-    const btnFavorito = document.createElement("BUTTON");
+
     btnFavorito.classList.add("btn", "btn-danger", "col");
     btnFavorito.textContent = "Guardar Favorito";
 
     // LocalStorage
     btnFavorito.onclick = function () {
-      
+      borrarUnFavorito(idMeal);
+
       if (existeStorage(idMeal)) {
+        //If item already exist in favorites, button has to change to delete from favorites.
         alert("Ya ha sido agregado a Favoritos");
         return;
       }
+      // btnFavorito.nextElementSibling.remove();
       agregarFavorito({
         id: idMeal,
         title: strMeal,
@@ -178,7 +185,6 @@ function iniciarApp() {
       });
     };
 
-    const btnCerrar = document.createElement("BUTTON");
     btnCerrar.classList.add("btn", "btn-secondary", "col");
     btnCerrar.addEventListener("click", () => {
       modal.hide();
@@ -200,16 +206,49 @@ function iniciarApp() {
     localStorage.setItem("favoritos", JSON.stringify([...favoritos, receta]));
   }
 
+  function borrarUnFavorito(id) {
+    const parentNode = btnCerrar.parentNode;
+    const btnBorrarFav = document.createElement("BUTTON");
+    btnBorrarFav.classList.add("btnbtn", "btn-danger", "col", "btn");
+    btnBorrarFav.textContent = "Borrar";
+    //modalFooter.removeChild(btnFavorito);
+    // modalFooter.nextElementSibling.nextElementSibling.nextElementSibling.remove(); btnBorrarFav?.remove() || modalFooter.appendChild(btnBorrarFav);
+
+    // Verificar si ya existe un botón de borrar en el modal
+    const existingBtn = modalFooter.querySelector(".btnbtn");
+    if (existingBtn) {
+      btnFavorito.remove();
+      existingBtn.remove(); // Si existe, elimínalo
+    } else {
+      parentNode.insertBefore(btnBorrarFav, btnCerrar);
+      //modalFooter.appendChild(btnBorrarFav); // Si no existe, agrégalo
+      btnFavorito.remove();
+    }
+
+    btnBorrarFav.onclick = function () {
+      const favoritos = JSON.parse(localStorage.getItem("favoritos")) ?? [];
+      const nuevaLista = favoritos.filter((receta) => receta.id !== id); // si el elemento existe se cambia el texto del boton a eliminar de favoritos.
+
+      localStorage.setItem("favoritos", JSON.stringify(nuevaLista));
+      parentNode.insertBefore(btnFavorito, btnCerrar);
+
+      //modalFooter.appendChild(btnFavorito);
+      btnBorrarFav.remove();
+    };
+  }
+
   function existeStorage(id) {
     const favoritos = JSON.parse(localStorage.getItem("favoritos")) ?? [];
-    return favoritos.some((favorito) => favorito.id === id);  
+    return favoritos.some((favorito) => favorito.id === id); // return true or false depending on if item exist or not
 
     // if (!existe) {
     //   return true;
     //   localStorage.setItem('favoritos', JSON.stringify([...favoritos, receta]));
-    // } 
+    // }
   }
 }
+
+document.addEventListener("DOMContentLoaded", iniciarApp);
 
 // function borrar() {
 //   function callback(resultado, callback) {
@@ -225,5 +264,3 @@ function iniciarApp() {
 
 //   callback(5, callbackFinal);
 // }
-
-document.addEventListener("DOMContentLoaded", iniciarApp);
