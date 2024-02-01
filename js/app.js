@@ -7,6 +7,19 @@ function iniciarApp() {
   const resultado = document.querySelector("#resultado");
   const modal = new bootstrap.Modal("#modal", {});
 
+  const btnBorrar = document.querySelector('.btnBorrar');
+  btnBorrar.addEventListener("click", borrarFav);
+  ///// test
+  function borrarFav() {
+    const approve = confirm("¿Estas seguro que quieres borrar tus recetas?");
+
+    if (approve) {
+      localStorage.clear();
+      //location.reload();
+    }
+  }
+  ///// test
+
   obtenerCategorias();
 
   function obtenerCategorias() {
@@ -110,7 +123,7 @@ function iniciarApp() {
   }
 
   function mostrarRecetaModal(receta) {
-    console.log(receta);
+    // console.log(receta);
     const { idMeal, strInstructions, strMeal, strMealThumb } = receta;
 
     const modalTitle = document.querySelector(".modal .modal-title");
@@ -132,7 +145,6 @@ function iniciarApp() {
         //  modalBody.innerHTML += `
         //   <li> ${receta[`strIngredient${i}`]} - ${receta[`strMeasure${i}`]} </li>
         //  `
-
         const ingrediente = receta[`strIngredient${i}`];
         const cantidad = receta[`strMeasure${i}`];
 
@@ -152,6 +164,20 @@ function iniciarApp() {
     btnFavorito.classList.add("btn", "btn-danger", "col");
     btnFavorito.textContent = "Guardar Favorito";
 
+    // LocalStorage
+    btnFavorito.onclick = function () {
+      
+      if (existeStorage(idMeal)) {
+        alert("Ya ha sido agregado a Favoritos");
+        return;
+      }
+      agregarFavorito({
+        id: idMeal,
+        title: strMeal,
+        img: strMealThumb,
+      });
+    };
+
     const btnCerrar = document.createElement("BUTTON");
     btnCerrar.classList.add("btn", "btn-secondary", "col");
     btnCerrar.addEventListener("click", () => {
@@ -168,20 +194,36 @@ function iniciarApp() {
     modal.show();
   }
 
-  function borrar() {
-    function callback(resultado, callback) {
-      console.log(`Resultado: ${resultado}`);
-      setTimeout(() => {
-        callback(resultado * 2);
-      }, 2000);
-    }
+  function agregarFavorito(receta) {
+    const favoritos = JSON.parse(localStorage.getItem("favoritos")) ?? []; //Get favoritos from locat storage converted already in an object with JSON.parse
 
-    function callbackFinal(resultado) {
-      console.log(`Resultado: ${resultado}`);
-    }
+    localStorage.setItem("favoritos", JSON.stringify([...favoritos, receta]));
+  }
 
-    callback(5, callbackFinal);
+  function existeStorage(id) {
+    const favoritos = JSON.parse(localStorage.getItem("favoritos")) ?? [];
+    return favoritos.some((favorito) => favorito.id === id);  
+
+    // if (!existe) {
+    //   return true;
+    //   localStorage.setItem('favoritos', JSON.stringify([...favoritos, receta]));
+    // } 
   }
 }
+
+// function borrar() {
+//   function callback(resultado, callback) {
+//     console.log(`Resultado: ${resultado}`);
+//     setTimeout(() => {
+//       callback(resultado * 2);
+//     }, 2000);
+//   }
+
+//   function callbackFinal(resultado) {
+//     console.log(`Resultado: ${resultado}`);
+//   }
+
+//   callback(5, callbackFinal);
+// }
 
 document.addEventListener("DOMContentLoaded", iniciarApp);
