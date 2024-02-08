@@ -25,17 +25,18 @@ function iniciarApp() {
   const btnCerrar = document.createElement("BUTTON");
 
   ///// test
-  // const btnBorrar = document.querySelector('.btnBorrar');
-  // btnBorrar.addEventListener("click", borrarFav);
+  const btnBorrar = document.querySelector('.btnBorrar');
+  btnBorrar.addEventListener("click", borrarFav);
 
-  // function borrarFav() {
-  //   const approve = confirm("¿Estas seguro que quieres borrar tus recetas?");
+  function borrarFav() {
+    const approve = confirm("¿Estas seguro que quieres borrar tus recetas?");
 
-  //   if (approve) {
-  //     localStorage.clear();
-  //     //location.reload();
-  //   }
-  // }
+    if (approve) {
+      localStorage.clear();
+      location.reload();
+      //location.reload();
+    }
+  }
   ///// test
 
 
